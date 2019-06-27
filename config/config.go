@@ -29,10 +29,14 @@ func(s *Signal) Decode(sval string) error {
 type Settings struct {
 	// ProfileDirectory the output directory for profile files.
 	ProfileDirectory string `env:"PROFILE_DIRECTORY"`
-	// HeapProfilerSignal the signal that triggers a heap profile dump. Defaults to SIGRTMAX-14
-	HeapProfilerSignal int `env:"HEAP_PROFILER_SIGNAL,strict,default=50"`
-	// HeapProfileFileName is the name of the output file for the heap profile
-	HeapProfileFileName string `env:"HEAP_PROFILE_FILE_NAME,default=heap.profile"`
+	// HeapProfilerSignal the signal that triggers a heap profile dump. Defaults to SIGUSR1
+	HeapProfilerSignal Signal `env:"HEAP_PROFILER_SIGNAL,strict,default=30"`
+	// HeapProfileName is the name of the output file for the heap profile
+	HeapProfileName string `env:"HEAP_PROFILE_NAME,default=heap.profile"`
+	// GoroutineProfileName is the output file of the goroutine profiler
+	GoroutineProfileName string `env:"GOROUTINE_PROFILE_NAME,default=goroutine.profile"`
+	// GoroutineProfilerSignal the signal that triggers a heap profile dump. Defaults to SIGUSR1
+	GoroutineProfilerSignal Signal `env:"GOROUTINE_PROFILER_SIGNAL,strict,default=30"`
 }
 
 // New returns a structure containing the configuration for the application.

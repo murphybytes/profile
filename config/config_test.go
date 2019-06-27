@@ -21,8 +21,10 @@ func TestNew(t *testing.T) {
 					dir, _ := os.Getwd()
 					return dir
 				}(),
-				HeapProfilerSignal:  50,
-				HeapProfileFileName: "heap.profile",
+				HeapProfilerSignal: Signal(30),
+				HeapProfileName:    "heap.profile",
+				GoroutineProfilerSignal: Signal(30),
+				GoroutineProfileName: "goroutine.profile",
 			},
 			wantErr: false,
 			setup:   nil,
