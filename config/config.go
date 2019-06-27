@@ -30,7 +30,7 @@ type Settings struct {
 	// ProfileDirectory the output directory for profile files.
 	ProfileDirectory string `env:"PROFILE_DIRECTORY"`
 	// HeapProfilerSignal the signal that triggers a heap profile dump. Defaults to SIGRTMAX-14
-	HeapProfilerSignal Signal `env:"HEAP_PROFILER_SIGNAL,strict,default=50"`
+	HeapProfilerSignal int `env:"HEAP_PROFILER_SIGNAL,strict,default=50"`
 	// HeapProfileFileName is the name of the output file for the heap profile
 	HeapProfileFileName string `env:"HEAP_PROFILE_FILE_NAME,default=heap.profile"`
 }
