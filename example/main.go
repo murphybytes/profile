@@ -5,8 +5,8 @@ import (
 	"os"
 	"os/signal"
 
-	_ "github.com/murphybytes/profiler/goroutine"
-	_ "github.com/murphybytes/profiler/heap"
+	_ "github.com/murphybytes/profile/goroutine"
+	_ "github.com/murphybytes/profile/heap"
 )
 
 func main() {

@@ -1,5 +1,5 @@
 // Package profiler contains function that will perform pprof profile operations.
-package profiler
+package profile
 
 import (
 	"context"
@@ -11,7 +11,7 @@ import (
 	"runtime/pprof"
 	"syscall"
 
-	"github.com/murphybytes/profiler/config"
+	"github.com/murphybytes/profile/config"
 )
 
 func profile(ctx context.Context, profileName, fileName string, sig config.Signal) {

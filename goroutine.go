@@ -1,10 +1,10 @@
-package profiler
+package profile
 
 import (
 	"context"
 	"path/filepath"
 
-	"github.com/murphybytes/profiler/config"
+	"github.com/murphybytes/profile/config"
 )
 
 

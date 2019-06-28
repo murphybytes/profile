@@ -9,8 +9,8 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/murphybytes/profiler"
-	"github.com/murphybytes/profiler/config"
+	"github.com/murphybytes/profile"
+	"github.com/murphybytes/profile/config"
 )
 
 func init() {
@@ -32,7 +32,7 @@ func init() {
 		if err != nil {
 			log.Println("unable to fetch heap profiler configuration", err)
 		}
-		profiler.Heap(ctx, cfg)
+		profile.Heap(ctx, cfg)
 		<-ch
 	}()
 }

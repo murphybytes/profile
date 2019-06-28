@@ -1,4 +1,4 @@
-module github.com/murphybytes/profiler
+module github.com/murphybytes/profile
 
 go 1.12
 

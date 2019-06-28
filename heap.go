@@ -1,10 +1,10 @@
-package profiler
+package profile
 
 import (
 	"context"
 	"path/filepath"
 
-	"github.com/murphybytes/profiler/config"
+	"github.com/murphybytes/profile/config"
 )
 
 // Heap outputs a heap profile to a file given a signal. Heap expects a cancel context as an argument. The default

@@ -1,4 +1,4 @@
-package profiler
+package profile
 
 import (
 	"bytes"
@@ -12,7 +12,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/murphybytes/profiler/config"
+	"github.com/murphybytes/profile/config"
 )
 
 func makeTestDir() (string, func(), error) {
@@ -41,7 +41,7 @@ func TestProfiler(t *testing.T) {
 			}
 			defer deleter()
 			testapp := filepath.Join(testDir, "app")
-			cmd := exec.Command("go", "build", "-o", testapp, "github.com/murphybytes/profiler/example")
+			cmd := exec.Command("go", "build", "-o", testapp, "github.com/murphybytes/profile/example")
 			if err := cmd.Run(); err != nil {
 				t.Fatal("could not build test app")
 			}

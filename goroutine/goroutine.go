@@ -9,8 +9,8 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/murphybytes/profiler"
-	"github.com/murphybytes/profiler/config"
+	"github.com/murphybytes/profile"
+	"github.com/murphybytes/profile/config"
 )
 
 func init() {
@@ -32,7 +32,7 @@ func init() {
 		if err != nil {
 			log.Println("unable to fetch goroutine profiler configuration", err)
 		}
-		profiler.Goroutine(ctx, cfg)
+		profile.Goroutine(ctx, cfg)
 		<-ch
 	}()
 }
