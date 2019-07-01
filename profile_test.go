@@ -31,6 +31,7 @@ func TestProfiler(t *testing.T) {
 	profiles := []string{
 		"heap",
 		"goroutine",
+		"allocs",
 	}
 
 	for _, profile := range profiles {
@@ -53,13 +54,13 @@ func TestProfiler(t *testing.T) {
 
 			cmd.Env = []string{
 				fmt.Sprintf("PROFILE_DIRECTORY=%s", testDir),
-				fmt.Sprintf("%s_PROFILER_SIGNAL=31", strings.ToUpper(profile)),
+				fmt.Sprintf("%s_PROFILER_SIGNAL=%d", strings.ToUpper(profile), config.SIGUSR2),
 			}
 			if err := cmd.Start(); err != nil {
 				t.Fatal("could not start test app", err)
 			}
 			time.Sleep(10 * time.Millisecond)
-			if err := cmd.Process.Signal(syscall.Signal(31)); err != nil {
+			if err := cmd.Process.Signal(syscall.Signal(config.SIGUSR2)); err != nil {
 				t.Fatal("attempt to send signal failed")
 			}
 

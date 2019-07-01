@@ -7,6 +7,21 @@ import (
 	"testing"
 )
 
+func defaultSignalValues() *Settings {
+	return &Settings{
+		ProfileDirectory:    func() string {
+			dir, _ := os.Getwd()
+			return dir
+		}(),
+		HeapProfilerSignal: Signal(SIGUSR1),
+		HeapProfileName:    "heap.profile",
+		GoroutineProfilerSignal: Signal(SIGUSR1),
+		GoroutineProfileName: "goroutine.profile",
+		AllocsProfilerSignal: Signal(SIGUSR1),
+		AllocsProfileName: "allocs.profile",
+	}
+}
+
 func TestNew(t *testing.T) {
 	tests := []struct {
 		name    string
@@ -16,25 +31,36 @@ func TestNew(t *testing.T) {
 	}{
 		{
 			name:    "defaults",
-			want:    &Settings{
-				ProfileDirectory:    func() string {
-					dir, _ := os.Getwd()
-					return dir
-				}(),
-				HeapProfilerSignal: Signal(30),
-				HeapProfileName:    "heap.profile",
-				GoroutineProfilerSignal: Signal(30),
-				GoroutineProfileName: "goroutine.profile",
-			},
+			want:    defaultSignalValues(),
 			wantErr: false,
 			setup:   nil,
 		},
 		{
-			name:    "invalid signal",
+			name:    "nonnumeric signal",
 			want:    nil,
 			wantErr: true,
 			setup:   func() {
 				_ = os.Setenv("HEAP_PROFILER_SIGNAL", "fifty")
+			},
+		},
+		{
+			name: "valid signal",
+			want: func() *Settings {
+				s := defaultSignalValues()
+				s.HeapProfilerSignal = Signal(SIGUSR2)
+				return s
+			}(),
+			wantErr: false,
+			setup: func() {
+				_ = os.Setenv("HEAP_PROFILER_SIGNAL", "31")
+			},
+		},
+		{
+			name: "invalid signal",
+			want: nil,
+			wantErr: true,
+			setup: func() {
+				_ = os.Setenv("HEAP_PROFILER_SIGNAL", "90")
 			},
 		},
 	}

@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/signal"
 
+	_ "github.com/murphybytes/profile/allocs"
 	_ "github.com/murphybytes/profile/goroutine"
 	_ "github.com/murphybytes/profile/heap"
 )

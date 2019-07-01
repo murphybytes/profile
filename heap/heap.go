@@ -4,5 +4,5 @@ package heap
 import "github.com/murphybytes/profile"
 
 func init() {
-	profile.Run(profile.Func("heap", profile.Heap))
+	profile.Run(profile.Heap)
 }

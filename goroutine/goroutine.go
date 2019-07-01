@@ -4,5 +4,5 @@ package goroutine
 import "github.com/murphybytes/profile"
 
 func init() {
-	profile.Run(profile.Func("goroutine", profile.Goroutine))
+	profile.Run(profile.Goroutine)
 }

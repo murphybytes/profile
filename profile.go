@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"runtime"
 	"runtime/pprof"
 	"syscall"
@@ -14,33 +15,25 @@ import (
 	"github.com/murphybytes/profile/config"
 )
 
-
-type runner interface {
-	Name() string
-	Run(ctx context.Context, cfg *config.Settings)
+// Allocs output a profile containing memory allocations
+func Allocs(ctx context.Context, settings *config.Settings) {
+	outputFile := filepath.Join(settings.ProfileDirectory, settings.AllocsProfileName)
+	profile(ctx, "allocs", outputFile, settings.AllocsProfilerSignal)
 }
 
-type runnable struct {
-	name string
-	operation func(ctx context.Context, cfg *config.Settings)
+// Goroutine outputs a goroutine profile.
+func Goroutine(ctx context.Context, settings *config.Settings) {
+	outputFile := filepath.Join(settings.ProfileDirectory, settings.GoroutineProfileName)
+	profile(ctx, "goroutine", outputFile, settings.GoroutineProfilerSignal)
 }
 
-func (r runnable) Name() string {
-	return r.name
+// Heap outputs a heap profile.
+func Heap(ctx context.Context, settings *config.Settings) {
+	outputFile := filepath.Join(settings.ProfileDirectory, settings.HeapProfileName)
+	profile(ctx, "heap", outputFile, settings.HeapProfilerSignal)
 }
 
-func (r runnable) Run(ctx context.Context, cfg *config.Settings) {
-	r.operation(ctx, cfg)
-}
-
-func Func( name string, fn func(ctx context.Context, cfg *config.Settings)) *runnable {
-	return &runnable{
-		name: name,
-		operation: fn,
-	}
-}
-
-func Run(r runner) {
+func Run(profileFunc func(ctx context.Context, cfg *config.Settings) ) {
 	go func() {
 		ch := make(chan os.Signal, 1)
 		signal.Notify(ch, syscall.SIGINT, syscall.SIGHUP, syscall.SIGTERM)
@@ -56,9 +49,9 @@ func Run(r runner) {
 
 		cfg, err := config.New()
 		if err != nil {
-			log.Printf("unable to fetch %s profiler configuration %q", r.Name(), err)
+			log.Printf("unable to fetch profiler configuration %q", err)
 		}
-		r.Run(ctx, cfg)
+		profileFunc(ctx, cfg)
 		<-ch
 	}()
 }
