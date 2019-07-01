@@ -15,6 +15,17 @@ import (
 	"github.com/murphybytes/profile/config"
 )
 
+func Block(ctx context.Context, settings *config.Settings) {
+	outputFile := filepath.Join(settings.ProfileDirectory, settings.BlockProfileName)
+	profile(ctx, "block", outputFile, settings.BlockProfilerSignal)
+}
+
+// ThreadCreate outputs stack traces that led to the creation of new OS threads
+func ThreadCreate(ctx context.Context, settings *config.Settings) {
+	outputFile := filepath.Join(settings.ProfileDirectory, settings.ThreadCreateProfileName)
+	profile(ctx, "threadcreate", outputFile, settings.ThreadCreateProfilerSignal)
+}
+
 // Allocs output a profile containing memory allocations
 func Allocs(ctx context.Context, settings *config.Settings) {
 	outputFile := filepath.Join(settings.ProfileDirectory, settings.AllocsProfileName)

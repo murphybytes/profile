@@ -19,6 +19,10 @@ func defaultSignalValues() *Settings {
 		GoroutineProfileName: "goroutine.profile",
 		AllocsProfilerSignal: Signal(SIGUSR1),
 		AllocsProfileName: "allocs.profile",
+		ThreadCreateProfilerSignal: Signal(SIGUSR1),
+		ThreadCreateProfileName: "threadcreate.profile",
+		BlockProfilerSignal: Signal(SIGUSR1),
+		BlockProfileName: "block.profile",
 	}
 }
 

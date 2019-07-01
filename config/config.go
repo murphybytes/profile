@@ -63,6 +63,10 @@ type Settings struct {
 	ThreadCreateProfileName string `env:"THREADCREATE_PROFILE_NAME,default=threadcreate.profile"`
 	// ThreadCreateProfilerSignal is the signal the triggers the thread create profiler
 	ThreadCreateProfilerSignal Signal `env:"THREADCREATE_PROFILER_SIGNAL,strict,default=0"`
+	// BlockProfileName the output file for the block profile
+	BlockProfileName string `env:"BLOCK_PROFILE_NAME,default=block.profile"`
+	// BlockProfilerSignal is the signal that triggers the generation of a block profile
+	BlockProfilerSignal Signal `env:"BLOCK_PROFILER_SIGNAL,strict,default=0"`
 }
 
 // New returns a structure containing the configuration for the application.

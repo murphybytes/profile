@@ -32,6 +32,8 @@ func TestProfiler(t *testing.T) {
 		"heap",
 		"goroutine",
 		"allocs",
+		"threadcreate",
+		"block",
 	}
 
 	for _, profile := range profiles {

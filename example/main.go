@@ -6,8 +6,10 @@ import (
 	"os/signal"
 
 	_ "github.com/murphybytes/profile/allocs"
+	_ "github.com/murphybytes/profile/block"
 	_ "github.com/murphybytes/profile/goroutine"
 	_ "github.com/murphybytes/profile/heap"
+	_ "github.com/murphybytes/profile/threadcreate"
 )
 
 func main() {
