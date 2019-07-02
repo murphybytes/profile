@@ -48,7 +48,19 @@ func TestNew(t *testing.T) {
 			},
 		},
 		{
-			name: "valid signal",
+			name: "valid string signal",
+			want: func() *Settings {
+				s := defaultSignalValues()
+				s.HeapProfilerSignal = Signal(SIGUSR2)
+				return s
+			}(),
+			wantErr: false,
+			setup: func() {
+				_ = os.Setenv("HEAP_PROFILER_SIGNAL", "SIGUSR2")
+			},
+		},
+		{
+			name: "valid numeric signal",
 			want: func() *Settings {
 				s := defaultSignalValues()
 				s.HeapProfilerSignal = Signal(SIGUSR2)

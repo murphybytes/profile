@@ -19,4 +19,16 @@ func validateSignal(sig int) error {
 	return nil
 }
 
+var sigMap = map[string]int{
+	"SIGUSR1": SIGUSR1,
+	"SIGUSR2": SIGUSR2,
+}
+
+func convertSignal(sigName string)(int, error) {
+	if v, ok := sigMap[sigName]; ok {
+		return v, nil
+	}
+	return 0, &ErrSignal{msg: fmt.Sprintf("unknown signal %q", sigName) }
+}
+
 
