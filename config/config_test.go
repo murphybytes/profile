@@ -4,6 +4,7 @@ package config
 import (
 	"os"
 	"reflect"
+	"strconv"
 	"testing"
 )
 
@@ -68,7 +69,7 @@ func TestNew(t *testing.T) {
 			}(),
 			wantErr: false,
 			setup: func() {
-				_ = os.Setenv("HEAP_PROFILER_SIGNAL", "31")
+				_ = os.Setenv("HEAP_PROFILER_SIGNAL", strconv.Itoa(SIGUSR2))
 			},
 		},
 		{

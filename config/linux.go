@@ -17,10 +17,10 @@ const (
 )
 
 func validateSignal(sig int) error {
-	switch sig {
-	case SIGUSR1:
-	case SIGUSR2:
-	case SIGRTMIN <= sig && SIGRTMAX >= sig :
+	switch {
+	case SIGUSR1 == sig:
+	case SIGUSR2 == sig:
+	case (SIGRTMIN <= sig && SIGRTMAX >= sig) :
 	default:
 		return &ErrSignal{msg: fmt.Sprintf("signal %d is not usable for linux", sig)}
 	}
