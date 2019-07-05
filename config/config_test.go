@@ -24,6 +24,8 @@ func defaultSignalValues() *Settings {
 		ThreadCreateProfileName: "threadcreate.profile",
 		BlockProfilerSignal: Signal(SIGUSR1),
 		BlockProfileName: "block.profile",
+		MutexProfilerSignal: Signal(SIGUSR1),
+		MutexProfileName: "mutex.profile",
 	}
 }
 

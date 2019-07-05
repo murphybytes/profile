@@ -8,13 +8,13 @@ import (
 	"github.com/joeshaw/envdecode"
 )
 
-type ErrSignal struct {
-	msg string
+type Error string
+
+func(e Error) Error() string {
+	return string(e)
 }
 
-func(es ErrSignal) Error() string {
-	return es.msg
-}
+const ErrSignal = Error("signal value not supported")
 
 
 
@@ -66,6 +66,10 @@ type Settings struct {
 	BlockProfileName string `env:"BLOCK_PROFILE_NAME,default=block.profile"`
 	// BlockProfilerSignal is the signal that triggers the generation of a block profile
 	BlockProfilerSignal Signal `env:"BLOCK_PROFILER_SIGNAL,strict,default=SIGUSR1"`
+	// MutexProfileName name of the output file for the mutex profile output.
+	MutexProfileName string `env:"MUTEX_PROFILE_NAME,default=mutex.profile"`
+	// MutexProfilerSignal is the signal that triggers the generation of the mutex profile.
+	MutexProfilerSignal Signal `env:"MUTEX_PROFILER_SIGNAL,strict,default=SIGUSR1"`
 }
 
 // New returns a structure containing the configuration for the application.

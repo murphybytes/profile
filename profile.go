@@ -15,6 +15,13 @@ import (
 	"github.com/murphybytes/profile/config"
 )
 
+// Mutex stack traces of holders of contended mutexes
+func Mutex(ctx context.Context, settings *config.Settings) {
+	outputFile := filepath.Join(settings.ProfileDirectory, settings.MutexProfileName)
+	profile(ctx, "mutex", outputFile, settings.MutexProfilerSignal)
+}
+
+// Block stack traces that led to blocking on synchronization primitives
 func Block(ctx context.Context, settings *config.Settings) {
 	outputFile := filepath.Join(settings.ProfileDirectory, settings.BlockProfileName)
 	profile(ctx, "block", outputFile, settings.BlockProfilerSignal)

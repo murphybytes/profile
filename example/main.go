@@ -9,6 +9,7 @@ import (
 	_ "github.com/murphybytes/profile/block"
 	_ "github.com/murphybytes/profile/goroutine"
 	_ "github.com/murphybytes/profile/heap"
+	_ "github.com/murphybytes/profile/mutex"
 	_ "github.com/murphybytes/profile/threadcreate"
 )
 

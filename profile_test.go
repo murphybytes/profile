@@ -34,6 +34,7 @@ func TestProfiler(t *testing.T) {
 		"allocs",
 		"threadcreate",
 		"block",
+		"mutex",
 	}
 
 	for _, profile := range profiles {
