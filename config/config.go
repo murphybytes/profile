@@ -4,6 +4,7 @@ package config
 import (
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/joeshaw/envdecode"
 )
@@ -70,6 +71,13 @@ type Settings struct {
 	MutexProfileName string `env:"MUTEX_PROFILE_NAME,default=mutex.profile"`
 	// MutexProfilerSignal is the signal that triggers the generation of the mutex profile.
 	MutexProfilerSignal Signal `env:"MUTEX_PROFILER_SIGNAL,strict,default=SIGUSR1"`
+	// CPUProfileName is the name of the output file that will contain CPU profile information
+	CPUProfileName string `env:"CPU_PROFILE_NAME,default=cpu.profile"`
+	// CPUProfilerSignal is the signal that will trigger the creation of a CPU profile
+	CPUProfilerSignal Signal `env:"CPU_PROFILER_SIGNAL,strict,default=SIGUSR1"`
+	// CPRProfileDuration the amount of time taken to collect CPR profile
+	CPUProfileDuration time.Duration `env:"CPU_PROFILE_DURATION,strict,default=30s"`
+
 }
 
 // New returns a structure containing the configuration for the application.
