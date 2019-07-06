@@ -89,17 +89,17 @@ func TestProfileHappyPath(t *testing.T) {
 	cfg, _ := config.New()
 	ctx, cancel := context.WithCancel(context.Background())
 	profile(ctx,
-		"heap",
-		filepath.Join(testDir, cfg.HeapProfileName),
 		cfg.HeapProfilerSignal,
-	)
+		func() error {
+			return generate("heap", filepath.Join(testDir, cfg.HeapProfileName))
+		})
 	time.Sleep(time.Millisecond)
 	prc, err := os.FindProcess(os.Getpid())
 	if err != nil {
 		t.Fatal(err)
 	}
 	prc.Signal(syscall.Signal(cfg.HeapProfilerSignal))
-	time.Sleep(10*time.Millisecond)
+	time.Sleep(10 * time.Millisecond)
 	cancel()
 	if _, err := os.Stat(filepath.Join(testDir, "heap.profile")); os.IsNotExist(err) {
 		t.Fatal("profile output is not present")

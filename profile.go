@@ -11,47 +11,85 @@ import (
 	"runtime"
 	"runtime/pprof"
 	"syscall"
+	"time"
 
 	"github.com/murphybytes/profile/config"
 )
 
 // Mutex stack traces of holders of contended mutexes
 func Mutex(ctx context.Context, settings *config.Settings) {
-	outputFile := filepath.Join(settings.ProfileDirectory, settings.MutexProfileName)
-	profile(ctx, "mutex", outputFile, settings.MutexProfilerSignal)
+	profile(ctx, settings.MutexProfilerSignal, func() error {
+		outputFile := filepath.Join(settings.ProfileDirectory, settings.MutexProfileName)
+		return generate("mutex", outputFile )
+	})
 }
 
 // Block stack traces that led to blocking on synchronization primitives
 func Block(ctx context.Context, settings *config.Settings) {
-	outputFile := filepath.Join(settings.ProfileDirectory, settings.BlockProfileName)
-	profile(ctx, "block", outputFile, settings.BlockProfilerSignal)
+	profile(ctx, settings.BlockProfilerSignal, func() error {
+		outputFile := filepath.Join(settings.ProfileDirectory, settings.BlockProfileName)
+		return generate("block", outputFile)
+	})
 }
 
 // ThreadCreate outputs stack traces that led to the creation of new OS threads
 func ThreadCreate(ctx context.Context, settings *config.Settings) {
-	outputFile := filepath.Join(settings.ProfileDirectory, settings.ThreadCreateProfileName)
-	profile(ctx, "threadcreate", outputFile, settings.ThreadCreateProfilerSignal)
+	profile(ctx, settings.ThreadCreateProfilerSignal, func() error {
+		outputFile := filepath.Join(settings.ProfileDirectory, settings.ThreadCreateProfileName)
+		return generate("threadcreate", outputFile)
+	})
 }
 
 // Allocs output a profile containing memory allocations
 func Allocs(ctx context.Context, settings *config.Settings) {
-	outputFile := filepath.Join(settings.ProfileDirectory, settings.AllocsProfileName)
-	profile(ctx, "allocs", outputFile, settings.AllocsProfilerSignal)
+	profile(ctx, settings.AllocsProfilerSignal, func() error {
+		outputFile := filepath.Join(settings.ProfileDirectory, settings.AllocsProfileName)
+		return generate("allocs", outputFile)
+	})
 }
 
 // Goroutine outputs a goroutine profile.
 func Goroutine(ctx context.Context, settings *config.Settings) {
-	outputFile := filepath.Join(settings.ProfileDirectory, settings.GoroutineProfileName)
-	profile(ctx, "goroutine", outputFile, settings.GoroutineProfilerSignal)
+	profile(ctx, settings.GoroutineProfilerSignal, func() error {
+		outputFile := filepath.Join(settings.ProfileDirectory, settings.GoroutineProfileName)
+		return generate("goroutine", outputFile)
+	})
 }
 
 // Heap outputs a heap profile.
 func Heap(ctx context.Context, settings *config.Settings) {
-	outputFile := filepath.Join(settings.ProfileDirectory, settings.HeapProfileName)
-	profile(ctx, "heap", outputFile, settings.HeapProfilerSignal)
+	profile(ctx, settings.HeapProfilerSignal, func() error {
+		outputFile := filepath.Join(settings.ProfileDirectory, settings.HeapProfileName)
+		return generate("heap", outputFile)
+	})
 }
 
-func Run(profileFunc func(ctx context.Context, cfg *config.Settings) ) {
+func Profile(ctx context.Context, settings *config.Settings) {
+	profile(ctx, settings.CPUProfilerSignal, func() error {
+		outputFile := filepath.Join(settings.ProfileDirectory, settings.CPUProfileName)
+		return generateCPUProfile(outputFile, settings.CPUProfileDuration)
+	})
+}
+
+func generateCPUProfile(fileName string, pause time.Duration) error {
+	f, err := os.Create(fileName)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	if err = pprof.StartCPUProfile(f); err != nil {
+		return err
+	}
+	time.Sleep(pause)
+	pprof.StopCPUProfile()
+	return nil
+}
+
+func Trace(ctx context.Context, settings *config.Settings) {
+
+}
+
+func Run(profileFunc func(ctx context.Context, cfg *config.Settings)) {
 	go func() {
 		ch := make(chan os.Signal, 1)
 		signal.Notify(ch, syscall.SIGINT, syscall.SIGHUP, syscall.SIGTERM)
@@ -74,7 +112,7 @@ func Run(profileFunc func(ctx context.Context, cfg *config.Settings) ) {
 	}()
 }
 
-func profile(ctx context.Context, profileName, fileName string, sig config.Signal) {
+func profile(ctx context.Context, sig config.Signal, fn func() error ) {
 	ch := make(chan os.Signal, 1)
 	signal.Notify(ch, syscall.Signal(sig))
 
@@ -87,8 +125,8 @@ func profile(ctx context.Context, profileName, fileName string, sig config.Signa
 		for {
 			select {
 			case <-ch:
-				if err := generate(profileName, fileName); err != nil {
-					log.Println(profileName, "profile failed with", err)
+				if err := fn(); err != nil {
+					log.Println("profile failed with", err)
 				}
 			case <-ctx.Done():
 				return
@@ -105,9 +143,7 @@ func generate(profileName, fileName string) error {
 	if err != nil {
 		return err
 	}
-	defer func() {
-		_ = f.Close()
-	}()
+	defer f.Close()
 	prof := pprof.Lookup(profileName)
 	if prof == nil {
 		return fmt.Errorf("could not create %q profile, no such profiler exists", profileName)

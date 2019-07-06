@@ -6,6 +6,7 @@ import (
 	"reflect"
 	"strconv"
 	"testing"
+	"time"
 )
 
 func defaultSignalValues() *Settings {
@@ -26,6 +27,9 @@ func defaultSignalValues() *Settings {
 		BlockProfileName: "block.profile",
 		MutexProfilerSignal: Signal(SIGUSR1),
 		MutexProfileName: "mutex.profile",
+		CPUProfilerSignal: Signal(SIGUSR1),
+		CPUProfileName: "cpu.profile",
+		CPUProfileDuration: 30 * time.Second,
 	}
 }
 

@@ -75,7 +75,7 @@ type Settings struct {
 	CPUProfileName string `env:"CPU_PROFILE_NAME,default=cpu.profile"`
 	// CPUProfilerSignal is the signal that will trigger the creation of a CPU profile
 	CPUProfilerSignal Signal `env:"CPU_PROFILER_SIGNAL,strict,default=SIGUSR1"`
-	// CPRProfileDuration the amount of time taken to collect CPR profile
+	// CPRProfileDuration the amount of time taken to collect CPU profile
 	CPUProfileDuration time.Duration `env:"CPU_PROFILE_DURATION,strict,default=30s"`
 
 }
