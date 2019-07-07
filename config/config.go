@@ -9,25 +9,28 @@ import (
 	"github.com/joeshaw/envdecode"
 )
 
-type Error string
+type configError string
 
-func(e Error) Error() string {
+func (e configError) Error() string {
 	return string(e)
 }
 
-const ErrSignal = Error("signal value not supported")
+const errSignal = configError("signal value not supported")
 
-
-
+// Signal handles human friendly signal names in environment variables.
 type Signal int
 
+// Signal support for syscall.Signal interface
 func (s Signal) Signal() {}
 
+// String support for Stringer
 func (s Signal) String() string {
 	return "signal " + strconv.Itoa(int(s))
 }
 
-func(s *Signal) Decode(sval string) error {
+// Decode process and validate environment variables. Both signal names such as
+// SIGUSR1 and numbers are supported.
+func (s *Signal) Decode(sval string) error {
 	i, err := strconv.Atoi(sval)
 	if err != nil {
 		if i, err = convertSignal(sval); err != nil {
@@ -77,7 +80,12 @@ type Settings struct {
 	CPUProfilerSignal Signal `env:"CPU_PROFILER_SIGNAL,strict,default=SIGUSR1"`
 	// CPRProfileDuration the amount of time taken to collect CPU profile
 	CPUProfileDuration time.Duration `env:"CPU_PROFILE_DURATION,strict,default=30s"`
-
+	// TraceProfileName is the name of the output file emitted by the trace profiler
+	TraceProfileName string `env:"TRACE_PROFILE_NAME,default=trace.profile"`
+	// TraceProfilerSignal the signal that will trigger the trace profiler
+	TraceProfilerSignal Signal `env:"TRACE_PROFILER_SIGNAL,strict,default=SIGUSR1"`
+	// TraceProfileDuration the amount of time taken to collect the trace profile.
+	TraceProfileDuration time.Duration `env:"TRACE_PROFILE_DURATION,strict,default=1s"`
 }
 
 // New returns a structure containing the configuration for the application.
@@ -87,13 +95,12 @@ func New() (*Settings, error) {
 		return nil, err
 	}
 	if cfg.ProfileDirectory == "" {
-		if dir, err := os.Getwd(); err != nil {
+		dir, err := os.Getwd();
+		if err != nil {
 			return nil, err
-		} else {
-			cfg.ProfileDirectory = dir
 		}
+		cfg.ProfileDirectory = dir
 	}
-
 
 	return &cfg, nil
 }

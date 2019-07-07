@@ -1,4 +1,4 @@
-// Package profiler contains function that will perform pprof profile operations.
+// Package profile contains function that will perform pprof profile operations.
 package profile
 
 import (
@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"runtime/pprof"
+	"runtime/trace"
 	"syscall"
 	"time"
 
@@ -20,7 +21,7 @@ import (
 func Mutex(ctx context.Context, settings *config.Settings) {
 	profile(ctx, settings.MutexProfilerSignal, func() error {
 		outputFile := filepath.Join(settings.ProfileDirectory, settings.MutexProfileName)
-		return generate("mutex", outputFile )
+		return generate("mutex", outputFile)
 	})
 }
 
@@ -64,14 +65,15 @@ func Heap(ctx context.Context, settings *config.Settings) {
 	})
 }
 
-func Profile(ctx context.Context, settings *config.Settings) {
+// CPU generates a profile when the designated signal is received.
+func CPU(ctx context.Context, settings *config.Settings) {
 	profile(ctx, settings.CPUProfilerSignal, func() error {
 		outputFile := filepath.Join(settings.ProfileDirectory, settings.CPUProfileName)
-		return generateCPUProfile(outputFile, settings.CPUProfileDuration)
+		return generateCPUProfile(ctx, outputFile, settings.CPUProfileDuration)
 	})
 }
 
-func generateCPUProfile(fileName string, pause time.Duration) error {
+func generateCPUProfile(ctx context.Context, fileName string, pause time.Duration) error {
 	f, err := os.Create(fileName)
 	if err != nil {
 		return err
@@ -80,15 +82,41 @@ func generateCPUProfile(fileName string, pause time.Duration) error {
 	if err = pprof.StartCPUProfile(f); err != nil {
 		return err
 	}
-	time.Sleep(pause)
+	sleep(ctx, pause)
 	pprof.StopCPUProfile()
 	return nil
 }
 
-func Trace(ctx context.Context, settings *config.Settings) {
-
+func sleep(ctx context.Context, duration time.Duration) {
+	select {
+	case <-time.After(duration):
+	case <-ctx.Done():
+	}
 }
 
+// Trace generates output for the Go execution tracer
+func Trace(ctx context.Context, settings *config.Settings) {
+	profile(ctx, settings.TraceProfilerSignal, func() error {
+		outputFile := filepath.Join(settings.ProfileDirectory, settings.TraceProfileName)
+		return generateTrace(ctx, outputFile, settings.TraceProfileDuration)
+	})
+}
+
+func generateTrace(ctx context.Context, fileName string, pause time.Duration) error {
+	f, err := os.Create(fileName)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	if err = trace.Start(f); err != nil {
+		return nil
+	}
+	sleep(ctx, pause)
+	trace.Stop()
+	return nil
+}
+
+// Run asynchronously executes a profile function.
 func Run(profileFunc func(ctx context.Context, cfg *config.Settings)) {
 	go func() {
 		ch := make(chan os.Signal, 1)
@@ -112,7 +140,7 @@ func Run(profileFunc func(ctx context.Context, cfg *config.Settings)) {
 	}()
 }
 
-func profile(ctx context.Context, sig config.Signal, fn func() error ) {
+func profile(ctx context.Context, sig config.Signal, fn func() error) {
 	ch := make(chan os.Signal, 1)
 	signal.Notify(ch, syscall.Signal(sig))
 

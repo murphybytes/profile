@@ -2,6 +2,7 @@
 
 package config
 
+// Valid signal numbers for this platform 
 const (
 	SIGUSR1    = 10
 	SIGUSR2    = 12
@@ -44,7 +45,7 @@ func validateSignal(sig int) error {
 	case SIGUSR2 == sig:
 	case SIGRTMIN <= sig && SIGRTMAX >= sig:
 	default:
-		return ErrSignal
+		return errSignal
 	}
 	return nil
 }
@@ -89,5 +90,5 @@ func convertSignal(sigName string) (int, error) {
 	if v, ok := sigMap[sigName]; ok {
 		return v, nil
 	}
-	return 0, ErrSignal
+	return 0, errSignal
 }

@@ -12,7 +12,7 @@ func validateSignal(sig int) error {
 	case SIGUSR1:
 	case SIGUSR2:
 	default:
-		return ErrSignal
+		return errSignal
 	}
 	return nil
 }
@@ -22,11 +22,9 @@ var sigMap = map[string]int{
 	"SIGUSR2": SIGUSR2,
 }
 
-func convertSignal(sigName string)(int, error) {
+func convertSignal(sigName string) (int, error) {
 	if v, ok := sigMap[sigName]; ok {
 		return v, nil
 	}
-	return 0, ErrSignal
+	return 0, errSignal
 }
-
-

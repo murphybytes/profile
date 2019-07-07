@@ -35,6 +35,8 @@ func TestProfiler(t *testing.T) {
 		"threadcreate",
 		"block",
 		"mutex",
+		"cpu",
+		"trace",
 	}
 
 	for _, profile := range profiles {
@@ -58,6 +60,7 @@ func TestProfiler(t *testing.T) {
 			cmd.Env = []string{
 				fmt.Sprintf("PROFILE_DIRECTORY=%s", testDir),
 				fmt.Sprintf("%s_PROFILER_SIGNAL=%d", strings.ToUpper(profile), config.SIGUSR2),
+				fmt.Sprintf("%s_PROFILER_DURATION=10ms", strings.ToUpper(profile)),
 			}
 			if err := cmd.Start(); err != nil {
 				t.Fatal("could not start test app", err)
