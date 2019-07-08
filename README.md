@@ -17,9 +17,12 @@ Find the ID of your process and send it a signal, SIGUSR1 is the default, and a 
 kill -SIGUSR1 20440
 ```
 The signal to output a profile and the location of the output file can be changed from the default using environment
-variables.
+variables. See [config](https://godoc.org/github.com/murphybytes/profile/config) for a list of all the parameters that can be adjusted
+to suit your particular needs. 
 ```bash
 export HEAP_PROFILE_SIGNAL=SIGUSR2 
 export PROFILE_DIRECTORY=/tmp 
 
 ```
+
+

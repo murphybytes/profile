@@ -2,7 +2,7 @@
 
 package config
 
-// Valid signal numbers for this platform 
+// Valid signal numbers for this platform
 const (
 	SIGUSR1    = 10
 	SIGUSR2    = 12
